@@ -9,7 +9,6 @@
 
     <EditText
             android:id="@+id/message"
-            android:text="Message"
             android:hint="Enter your message here"
             android:textSize="15pt"
             android:layout_width="match_parent"
@@ -17,37 +16,47 @@
             android:layout_weight="1"
             android:gravity="center"
             android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
     />
 
     <EditText
             android:id="@+id/phone_number"
-            android:text="Phone"
-            android:hint="Enter reciever's phone number"
-            android:textSize="15pt"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-    />
-
-    <EditText
-            android:id="@+id/minutes"
-            android:textSize="15pt"
-            android:hint="Number of minutes"
+            android:textSize="11pt"
+            android:hint="Enter recipient's phone number"
             android:inputType="numberSigned"
             android:ems="10"
             android:layout_weight="1"
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+    />
+
+    <EditText
+            android:id="@+id/minutes"
+            android:textSize="11pt"
+            android:hint="Resend every __ minutes"
+            android:inputType="numberSigned"
+            android:ems="10"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
     />
 
     <Button
             android:id="@+id/start_stop_button"
-            android:text="Button"
+            android:text="Start"
+            android:textSize="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:padding="30dp"
     />
 </LinearLayout>

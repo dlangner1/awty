@@ -1,38 +1,45 @@
 package edu.us.ischool.dlangner.awty
 
 import android.content.Context
+import android.content.res.Resources
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.Button
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val MESSAGE = "message"
+private const val PHONE_NUMBER = "phone_number"
+private const val MINUTES = "minutes"
 
-/**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [ContactFragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
- * Use the [ContactFragment.newInstance] factory method to
- * create an instance of this fragment.
- *
- */
 class ContactFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    private var isSendingMessage: Boolean = false
+
+    private var messageEditText: EditText? = null
+    private var phoneEditText: EditText? = null
+    private var minutesEditText: EditText? = null
+    private var startStopButton: Button? = null
+
     private var listener: OnFragmentInteractionListener? = null
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     */
+    interface OnFragmentInteractionListener {
+        fun onStartStopPressed()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
@@ -40,12 +47,39 @@ class ContactFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_contact, container, false)
-    }
+        val rootView = inflater.inflate(R.layout.fragment_contact, container, false)
 
-    // TODO: Rename method, update argument and hook method into UI event
-    fun onButtonPressed(uri: Uri) {
-        listener?.onFragmentInteraction(uri)
+        messageEditText = rootView.findViewById(R.id.message)
+        phoneEditText = rootView.findViewById(R.id.phone_number)
+        minutesEditText = rootView.findViewById(R.id.minutes)
+        startStopButton = rootView.findViewById(R.id.start_stop_button)
+
+        startStopButton?.setBackgroundColor(resources.getColor(R.color.colorPrimary))
+
+        startStopButton?.setTextColor(Color.WHITE)
+        startStopButton?.setOnClickListener {
+
+            if (!messageEditText?.text.isNullOrBlank() and
+                !phoneEditText?.text.isNullOrBlank() and
+                !minutesEditText?.text.isNullOrBlank()) {
+
+                isSendingMessage = !isSendingMessage
+
+                var text = "Stop"
+                var backgroundColor = resources.getColor(R.color.colorAccent)
+
+                if (!isSendingMessage) {
+                    text = "Start"
+                    backgroundColor = resources.getColor(R.color.colorPrimary)
+                }
+
+                startStopButton?.setBackgroundColor(backgroundColor)
+                startStopButton?.text = text
+                listener?.onStartStopPressed()
+            }
+        }
+
+        return rootView
     }
 
     override fun onAttach(context: Context) {
@@ -62,39 +96,20 @@ class ContactFragment : Fragment() {
         listener = null
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson [Communicating with Other Fragments]
-     * (http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
-    }
-
     companion object {
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
          * @return A new instance of fragment ContactFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance() =
             ContactFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+//                arguments = Bundle().apply {
+//                    putString(MESSAGE, "")
+//                    putString(PHONE_NUMBER, "")
+//                    putString(MINUTES, "10")
+//                }
             }
     }
 }
