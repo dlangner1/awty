@@ -35,7 +35,7 @@ class ContactFragment : Fragment() {
      * activity.
      */
     interface OnFragmentInteractionListener {
-        fun onStartStopPressed()
+        fun onStartStopPressed(shouldStart: Boolean, message: String, phoneNumber: String, duration: Int)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,17 +65,17 @@ class ContactFragment : Fragment() {
 
                 isSendingMessage = !isSendingMessage
 
-                var text = "Stop"
-                var backgroundColor = resources.getColor(R.color.colorAccent)
+                startStopButton?.text = if (isSendingMessage) "Stop" else "Start"
+                startStopButton?.setBackgroundColor(if (isSendingMessage) resources.getColor(R.color.colorAccent)
+                else resources.getColor(R.color.colorPrimary))
 
-                if (!isSendingMessage) {
-                    text = "Start"
-                    backgroundColor = resources.getColor(R.color.colorPrimary)
-                }
 
-                startStopButton?.setBackgroundColor(backgroundColor)
-                startStopButton?.text = text
-                listener?.onStartStopPressed()
+                listener?.onStartStopPressed(
+                    isSendingMessage,
+                    messageEditText?.text.toString(),
+                    phoneEditText?.text.toString(),
+                    minutesEditText?.text.toString().toInt()
+                )
             }
         }
 
@@ -105,11 +105,6 @@ class ContactFragment : Fragment() {
         @JvmStatic
         fun newInstance() =
             ContactFragment().apply {
-//                arguments = Bundle().apply {
-//                    putString(MESSAGE, "")
-//                    putString(PHONE_NUMBER, "")
-//                    putString(MINUTES, "10")
-//                }
             }
     }
 }
