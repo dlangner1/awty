@@ -1,28 +1,35 @@
 package edu.us.ischool.dlangner.awty
 
-import android.app.Service
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.os.IBinder
 import android.telephony.PhoneNumberUtils
-import android.widget.Toast
 import java.util.*
 import kotlin.concurrent.timerTask
+import android.Manifest.permission_group.SMS
+import android.app.PendingIntent
+import android.content.pm.PackageManager
+import android.support.v4.app.ActivityCompat
+import android.telephony.SmsManager
+
 
 private const val CONTACT_FRAGMENT_TAG = "CONTACT_FRAGMENT_CONTACT"
 
 class MainActivity : AppCompatActivity(),
     ContactFragment.OnFragmentInteractionListener {
 
-    lateinit var toast: Toast
     var timeToResend: Long = 0
-    val timer = Timer()
+    private var timer = Timer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.SEND_SMS), 1)
+        }
+
 
         val contactFragment = ContactFragment.newInstance()
         supportFragmentManager.beginTransaction().run {
@@ -33,19 +40,20 @@ class MainActivity : AppCompatActivity(),
 
     override fun onStartStopPressed(shouldStart: Boolean, message: String, phoneNumber: String, duration: Int) {
         if (shouldStart) {
-            // create toast message
+
+            if (timer == null) {
+                timer = Timer()
+            }
+
             val formattedNumber = PhoneNumberUtils.formatNumber(phoneNumber, "1", "US")
-            val formattedMessage = formattedNumber.plus(": ").plus(message)
-            toast = Toast.makeText(this, formattedMessage, Toast.LENGTH_LONG)
             timeToResend = (duration * 60000).toLong() // converts minutes to milliseconds
 
             val handler = Handler()
-
             timer.scheduleAtFixedRate(timerTask {
                 run {
                     handler.post {
                         run {
-                            toast.show()
+                            sendSMS(formattedNumber, message)
                         }
                     }
                 }
@@ -54,5 +62,14 @@ class MainActivity : AppCompatActivity(),
             // stop service
             timer.cancel()
         }
+    }
+
+    private fun sendSMS(phoneNumber: String, message: String) {
+        val pi = PendingIntent.getActivity(
+            this, 0,
+            Intent(this, SMS::class.java), 0
+        )
+        val sms = SmsManager.getDefault()
+        sms.sendTextMessage(phoneNumber, null, message, pi, null)
     }
 }
